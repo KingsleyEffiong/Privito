@@ -1,0 +1,64 @@
+"use client";
+import React from "react";
+import { useRouter, useSearchParams } from "next/navigation";
+
+export default function DepositPreviewPage() {
+  const router = useRouter();
+  const params = useSearchParams();
+  const amount = params.get("amount");
+  const btcAddress = "bc1qexamplebtcaddresshere";
+
+  const handleConfirm = () => {
+    // You can integrate your backend API call here
+    router.push(`/dashboard/deposit/deposit-receipt/?amount=${amount}`);
+  };
+
+  return (
+    <div className="flex justify-center items-center min-h-screen relative overflow-hidden px-4 sm:px-6 md:px-12 py-8 sm:py-12 ">
+      {/* Decorative background blobs - hidden on smaller screens */}
+      <div className="hidden md:block absolute top-24 left-24 w-72 sm:w-96 h-72 sm:h-96 bg-yellow-400/20 rounded-full blur-3xl pointer-events-none" />
+      <div className="hidden md:block absolute bottom-24 right-24 w-72 sm:w-96 h-72 sm:h-96 bg-indigo-500/20 rounded-full blur-3xl pointer-events-none" />
+
+      {/* Glass card */}
+      <div className="relative w-full max-w-md sm:max-w-3xl md:max-w-4xl backdrop-blur-xl bg-white/10 border border-white/20 rounded-3xl shadow-2xl p-8 sm:p-14 z-10 text-white">
+        <h2 className="text-3xl sm:text-4xl md:text-5xl font-extrabold mb-6 sm:mb-8 md:mb-10 text-center drop-shadow-lg">
+          Confirm Deposit
+        </h2>
+
+        <div className="mb-6 sm:mb-8 md:mb-10">
+          <p className="text-gray-300 mb-1 sm:mb-2 text-base sm:text-lg font-semibold tracking-wide uppercase">
+            Bitcoin Address
+          </p>
+          <p className="font-mono text-base sm:text-lg md:text-xl text-gray-100 bg-white/10 border border-white/30 p-4 sm:p-6 rounded-lg select-all break-words shadow-sm">
+            {btcAddress}
+          </p>
+        </div>
+
+        <div className="mb-8 sm:mb-10 md:mb-12">
+          <p className="text-gray-300 mb-1 sm:mb-2 text-base sm:text-lg font-semibold tracking-wide uppercase">
+            Deposit Amount
+          </p>
+          <p className="font-bold text-2xl sm:text-3xl md:text-4xl tracking-wide">
+            {amount} BTC
+          </p>
+        </div>
+
+        <div className="flex flex-col sm:flex-row gap-6 sm:gap-10 max-w-md sm:max-w-xl mx-auto">
+          <button
+            onClick={() => router.back()}
+            className="flex-1 bg-white/20 hover:bg-white/30 text-white font-semibold py-3 sm:py-5 rounded-3xl text-lg sm:text-xl transition-shadow shadow-md"
+          >
+            Cancel
+          </button>
+          <button
+            onClick={handleConfirm}
+            className="flex-1 bg-gradient-to-r from-yellow-400 to-yellow-500 hover:from-yellow-500 hover:to-yellow-600
+              text-black font-bold py-3 sm:py-5 rounded-3xl text-lg sm:text-xl transition-shadow shadow-lg"
+          >
+            Confirm
+          </button>
+        </div>
+      </div>
+    </div>
+  );
+}

@@ -47,7 +47,7 @@ const UserTransactions: React.FC = () => {
   ];
 
   return (
-    <div className="w-full max-w-6xl mx-auto px-4">
+    <div className="w-full max-w-6xl mx-auto">
       <div className="backdrop-blur-md bg-white/10 border border-white/20 rounded-2xl shadow-lg overflow-hidden">
         {/* Header */}
         <div className="p-4 border-b border-white/20">

@@ -1,11 +1,6 @@
-"ise client";
-// app/page.tsx
+"use client";
 import React from "react";
-import Image from "next/image";
-import dashboardImage from "@/assets/dynamic-data-visualization-3d (1).jpg";
-import Background from "@/components/shared/Background";
 import UserTransactions from "@/components/dashboard/UserTransactions";
-import DashboardNavbar from "@/components/dashboard/shared/Navbar";
 
 interface Stat {
   label: string;
@@ -23,34 +18,8 @@ const Page: React.FC = () => {
   ];
 
   return (
-    <div className="relative min-h-screen flex flex-col items-center justify-center p-6 gap-11">
-      <div className="px-4 w-full max-w-6xl">
-        <DashboardNavbar
-          title={"Dashboard"}
-          referralLink="https://privito.com/referral"
-          userName="John Doe"
-        />
-      </div>
-      {/* Background Image - lowest layer */}
-      <Image
-        src={dashboardImage}
-        alt="Dashboard background"
-        fill
-        style={{ objectFit: "cover" }}
-        className="absolute inset-0 -z-30"
-        priority
-      />
-
-      {/* Star Animation - above background image */}
-      <div className="absolute inset-0 z-20 pointer-events-none">
-        <Background />
-      </div>
-
-      {/* Dark overlay - above stars */}
-      <div className="absolute inset-0 bg-black/50 backdrop-blur-sm -z-10"></div>
-
-      {/* Stats grid - top layer */}
-      <div className="relative grid grid-cols-1 md:grid-cols-3 gap-6 w-full max-w-6xl  px-4">
+    <>
+      <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
         {stats.map((stat, idx) => (
           <div
             key={idx}
@@ -61,8 +30,12 @@ const Page: React.FC = () => {
           </div>
         ))}
       </div>
-      <UserTransactions />
-    </div>
+
+      {/* Transactions */}
+      <div className="mt-8">
+        <UserTransactions />
+      </div>
+    </>
   );
 };
 
