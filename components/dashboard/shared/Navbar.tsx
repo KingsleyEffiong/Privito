@@ -70,7 +70,7 @@ const DashboardNavbar: React.FC<DashboardNavbarProps> = ({
 
       {/* Mobile Dropdown Menu */}
       {menuOpen && (
-        <div className="absolute top-full right-0 mt-2 w-60 bg-white/10 border border-white/20 backdrop-blur-md rounded-lg shadow-lg p-4 flex flex-col gap-3 md:hidden">
+        <div className="absolute top-full right-0 mt-2 w-60 bg-white/10 border border-white/20 backdrop-blur-md rounded-lg shadow-lg p-4 flex flex-col gap-3 md:hidden z-40">
           {/* Withdraw Button */}
           <button className="bg-red-500 hover:bg-red-600 text-white px-3 py-2 rounded-md shadow-md text-sm transition">
             Withdraw
