@@ -27,6 +27,7 @@ const Page: React.FC = () => {
       <DashboardNavbar
         title={"Dashboard"}
         referralLink="https://privito.com/referral"
+        userName="John Doe"
       />
       {/* Background Image - lowest layer */}
       <Image
