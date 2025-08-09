@@ -24,11 +24,13 @@ const Page: React.FC = () => {
 
   return (
     <div className="relative min-h-screen flex flex-col items-center justify-center p-6 gap-11">
-      <DashboardNavbar
-        title={"Dashboard"}
-        referralLink="https://privito.com/referral"
-        userName="John Doe"
-      />
+      <div className="px-4 w-full max-w-6xl">
+        <DashboardNavbar
+          title={"Dashboard"}
+          referralLink="https://privito.com/referral"
+          userName="John Doe"
+        />
+      </div>
       {/* Background Image - lowest layer */}
       <Image
         src={dashboardImage}
@@ -48,7 +50,7 @@ const Page: React.FC = () => {
       <div className="absolute inset-0 bg-black/50 backdrop-blur-sm -z-10"></div>
 
       {/* Stats grid - top layer */}
-      <div className="relative grid grid-cols-1 md:grid-cols-3 gap-6 w-full max-w-6xl">
+      <div className="relative grid grid-cols-1 md:grid-cols-3 gap-6 w-full max-w-6xl  px-4">
         {stats.map((stat, idx) => (
           <div
             key={idx}
