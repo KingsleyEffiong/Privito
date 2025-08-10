@@ -1,6 +1,7 @@
 "use client";
 import React, { useState } from "react";
 import { User, Menu, X } from "lucide-react";
+import Link from "next/link";
 
 interface DashboardNavbarProps {
   title: string;
@@ -25,9 +26,9 @@ const DashboardNavbar: React.FC<DashboardNavbarProps> = ({
       {/* Right section */}
       <div className="flex items-center gap-3">
         {/* Deposit Button (always visible) */}
-        <button className="bg-green-500 hover:bg-green-600 text-white px-4 py-2 rounded-lg shadow-md transition text-sm font-medium">
+        <Link href="/dashboard/deposit" className="bg-green-500 hover:bg-green-600 text-white px-4 py-2 rounded-lg shadow-md transition text-sm font-medium">
           Deposit
-        </button>
+        </Link>
 
         {/* Mobile Menu Toggle */}
         <button
