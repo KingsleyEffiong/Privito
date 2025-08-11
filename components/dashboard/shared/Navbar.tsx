@@ -17,7 +17,7 @@ const DashboardNavbar: React.FC<DashboardNavbarProps> = ({
   const [menuOpen, setMenuOpen] = useState(false);
 
   return (
-    <nav className="w-full max-w-6xl backdrop-blur-lg bg-white/10 border-b border-white/20 px-4 py-3 md:px-6 md:py-4 flex items-center justify-between rounded-b-2xl shadow-lg relative">
+    <nav className="w-full not-visited: backdrop-blur-lg bg-white/10 border-b border-white/20 px-4 py-3 md:px-6 md:py-4 flex items-center justify-between rounded-b-2xl shadow-lg fixed top-0 left-0 z-50 mx-auto">
       {/* Left - Title */}
       <h1 className="text-xl md:text-2xl font-bold text-white drop-shadow-md">
         {title}
@@ -77,11 +77,14 @@ const DashboardNavbar: React.FC<DashboardNavbarProps> = ({
 
       {/* Mobile Dropdown Menu */}
       {menuOpen && (
-        <div className="absolute top-full right-0 mt-2 w-60 bg-white/10 border border-white/20 backdrop-blur-md rounded-lg shadow-lg p-4 flex flex-col gap-3 md:hidden z-[9999] animate-slideDown">
+        <div className="absolute top-full right-0 mt-2 w-60 bg-white/10 border border-white/20 backdrop-blur-xl rounded-lg shadow-lg p-4 flex flex-col gap-3 md:hidden z-[9999] animate-slideDown">
           {/* Withdraw Button */}
-          <button className="bg-red-500 hover:bg-red-600 text-white px-3 py-2 rounded-md shadow-md text-sm transition">
+          <Link
+            href="/dashboard/withdrawal"
+            className="bg-red-500 hover:bg-red-600 text-white px-3 py-2 rounded-md shadow-md text-sm transition"
+          >
             Withdraw
-          </button>
+          </Link>
 
           {/* Referral Link */}
           <div className="flex items-center gap-2">

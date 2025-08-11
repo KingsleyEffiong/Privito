@@ -42,7 +42,7 @@ const DashboardLayout: React.FC<DashboardLayoutProps> = ({ children }) => {
       </div>
 
       {/* Page Content */}
-      <div className="relative w-full max-w-6xl">{children}</div>
+      <div className="relative w-full max-w-6xl mt-7">{children}</div>
     </div>
   );
 };
