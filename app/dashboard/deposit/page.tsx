@@ -71,6 +71,15 @@ export default function DepositPage() {
           No transaction fee — full amount will be deposited.
         </p>
 
+        {/* Toast Message */}
+        <div className="mb-10">
+          {message && (
+            <div className=" bg-white/10 backdrop-blur-lg border border-white/20 text-white px-6 sm:px-8 py-3  sm:py-4 rounded-3xl shadow-xl text-base sm:text-lg font-semibold">
+              {message}
+            </div>
+          )}
+        </div>
+
         {/* Deposit Button */}
         <button
           onClick={handleDepositClick}
@@ -78,13 +87,6 @@ export default function DepositPage() {
         >
           Deposit
         </button>
-
-        {/* Toast Message */}
-        {message && (
-          <div className="fixed bottom-8 left-1/2 transform -translate-x-1/2 bg-white/10 backdrop-blur-lg border border-white/20 text-white px-6 sm:px-8 py-3 sm:py-4 rounded-3xl shadow-xl z-50 text-base sm:text-lg font-semibold">
-            {message}
-          </div>
-        )}
       </div>
     </div>
   );

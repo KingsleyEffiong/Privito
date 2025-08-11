@@ -1,12 +1,31 @@
 "use client";
-import React from "react";
+import React, { useState, useEffect } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
+import { Copy, Check } from "lucide-react";
 
 export default function DepositPreviewPage() {
   const router = useRouter();
   const params = useSearchParams();
   const amount = params.get("amount");
   const btcAddress = "bc1qexamplebtcaddresshere";
+
+  const [copied, setCopied] = useState(false);
+
+  const handleCopy = async () => {
+    try {
+      await navigator.clipboard.writeText(btcAddress);
+      setCopied(true);
+    } catch {
+      setCopied(false);
+    }
+  };
+
+  useEffect(() => {
+    if (copied) {
+      const timeout = setTimeout(() => setCopied(false), 2000);
+      return () => clearTimeout(timeout);
+    }
+  }, [copied]);
 
   const handleConfirm = () => {
     // You can integrate your backend API call here
@@ -26,8 +45,24 @@ export default function DepositPreviewPage() {
         </h2>
 
         <div className="mb-6 sm:mb-8 md:mb-10">
-          <p className="text-gray-300 mb-1 sm:mb-2 text-base sm:text-lg font-semibold tracking-wide uppercase">
+          <p className="text-gray-300 mb-1 sm:mb-2 text-base sm:text-lg font-semibold tracking-wide uppercase flex items-center justify-between">
             Bitcoin Address
+            <button
+              onClick={handleCopy}
+              className="ml-4 flex items-center gap-1 text-sm text-white/80 hover:text-white transition"
+              title="Copy Bitcoin address"
+              type="button"
+            >
+              {copied ? (
+                <>
+                  <Check size={16} /> Copied
+                </>
+              ) : (
+                <>
+                  <Copy size={16} /> Copy
+                </>
+              )}
+            </button>
           </p>
           <p className="font-mono text-base sm:text-lg md:text-xl text-gray-100 bg-white/10 border border-white/30 p-4 sm:p-6 rounded-lg select-all break-words shadow-sm">
             {btcAddress}

@@ -26,7 +26,10 @@ const DashboardNavbar: React.FC<DashboardNavbarProps> = ({
       {/* Right section */}
       <div className="flex items-center gap-3">
         {/* Deposit Button (always visible) */}
-        <Link href="/dashboard/deposit" className="bg-green-500 hover:bg-green-600 text-white px-4 py-2 rounded-lg shadow-md transition text-sm font-medium">
+        <Link
+          href="/dashboard/deposit"
+          className="bg-green-500 hover:bg-green-600 text-white px-4 py-2 rounded-lg shadow-md transition text-sm font-medium"
+        >
           Deposit
         </Link>
 
@@ -41,9 +44,12 @@ const DashboardNavbar: React.FC<DashboardNavbarProps> = ({
         {/* Desktop Menu */}
         <div className="hidden md:flex items-center gap-4 bg-white/10 border border-white/20 rounded-lg px-4 py-2 backdrop-blur-md">
           {/* Withdraw Button */}
-          <button className="bg-red-500 hover:bg-red-600 text-white px-3 py-1 rounded-md shadow-md text-sm transition">
+          <Link
+            href="/dashboard/withdrawal"
+            className="bg-red-500 hover:bg-red-600 text-white px-3 py-1 rounded-md shadow-md text-sm transition"
+          >
             Withdraw
-          </button>
+          </Link>
 
           {/* Referral Link */}
           <div className="flex items-center gap-2">
@@ -71,7 +77,7 @@ const DashboardNavbar: React.FC<DashboardNavbarProps> = ({
 
       {/* Mobile Dropdown Menu */}
       {menuOpen && (
-        <div className="absolute top-full right-0 mt-2 w-60 bg-white/10 border border-white/20 backdrop-blur-md rounded-lg shadow-lg p-4 flex flex-col gap-3 md:hidden z-40">
+        <div className="absolute top-full right-0 mt-2 w-60 bg-white/10 border border-white/20 backdrop-blur-md rounded-lg shadow-lg p-4 flex flex-col gap-3 md:hidden z-[9999] animate-slideDown">
           {/* Withdraw Button */}
           <button className="bg-red-500 hover:bg-red-600 text-white px-3 py-2 rounded-md shadow-md text-sm transition">
             Withdraw
@@ -97,6 +103,23 @@ const DashboardNavbar: React.FC<DashboardNavbarProps> = ({
           </div>
         </div>
       )}
+
+      {/* Animation keyframes */}
+      <style jsx>{`
+        @keyframes slideDown {
+          from {
+            opacity: 0;
+            transform: translateY(-10px);
+          }
+          to {
+            opacity: 1;
+            transform: translateY(0);
+          }
+        }
+        .animate-slideDown {
+          animation: slideDown 0.2s ease-out forwards;
+        }
+      `}</style>
     </nav>
   );
 };
