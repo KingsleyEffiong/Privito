@@ -177,7 +177,7 @@ export default function DepositPreviewPage() {
               </button>
             </p>
             <p className="font-mono bg-white/10 border border-white/30 p-4 rounded-lg">
-              {btcAddress}
+              {btcAddress.slice(0, 10)}
             </p>
           </div>
 

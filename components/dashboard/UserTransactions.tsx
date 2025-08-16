@@ -93,7 +93,7 @@ const UserTransactions: React.FC = () => {
                     >
                       <td className="px-4 py-3">{tx.date}</td>
                       <td className="px-4 py-3 flex items-center gap-2">
-                        {tx.id}
+                        {tx.id.slice(0, 9)}...
                         <button
                           onClick={() => handleCopy(tx.id)}
                           className="p-1 rounded-md hover:bg-white/10 transition"
@@ -148,7 +148,7 @@ const UserTransactions: React.FC = () => {
                   </p>
                   <p className="flex items-center gap-2">
                     <span className="font-semibold">Transaction ID:</span>{" "}
-                    {tx.id}
+                    {tx.id.slice(0, 9)}...
                     <button
                       onClick={() => handleCopy(tx.id)}
                       className="p-1 rounded-md hover:bg-white/10 transition"

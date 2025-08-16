@@ -44,7 +44,7 @@ export default function DepositPage() {
         {/* BTC address display */}
         <div className="bg-white/10 backdrop-blur-md border border-white/30 p-4 sm:p-6 rounded-lg flex flex-col sm:flex-row justify-between items-start sm:items-center mb-6 sm:mb-8 shadow-sm gap-2 sm:gap-0">
           <span className="font-mono text-base sm:text-lg text-gray-100 truncate select-all break-all w-full sm:w-auto">
-            {btcAddress}
+            {btcAddress.slice(0, 10)}...
           </span>
           <button
             onClick={handleCopy}
