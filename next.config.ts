@@ -16,6 +16,7 @@ const nextConfig: NextConfig = {
       "assets.bwbx.io",
       "cryptoslate.com",
       "www.coindesk.com",
+      "res.cloudinary.com",
     ],
   },
 };

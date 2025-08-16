@@ -16,21 +16,29 @@ interface DataPoint {
   interest: number;
 }
 
+interface InterestEntry {
+  amountAdded: number;
+  date?: string;
+  createdAt?: string; // some APIs use createdAt
+}
+
 const InterestChart: React.FC = () => {
   const { data, isLoading } = useUser();
 
   // Transform interestHistory into chart-friendly format
   const chartData: DataPoint[] = useMemo(() => {
-    if (data?.success && data?.data?.interestHistory) {
-      return data.data.interestHistory.map((entry: any) => {
-        const date = new Date(entry.createdAt || entry.date || new Date()); // fallback if no date
-        return {
-          day: date.toLocaleDateString("en-US", {
-            weekday: "short",
-          }),
-          interest: entry.amountAdded || 0,
-        };
-      });
+    if (data?.success && Array.isArray(data?.data?.interestHistory)) {
+      return (data.data.interestHistory as InterestEntry[]).map(
+        (entry: InterestEntry) => {
+          const date = new Date(entry.createdAt ?? entry.date ?? new Date());
+          return {
+            day: date.toLocaleDateString("en-US", {
+              weekday: "short",
+            }),
+            interest: entry.amountAdded ?? 0,
+          };
+        }
+      );
     }
     return [];
   }, [data]);

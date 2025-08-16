@@ -1,7 +1,16 @@
 // components/UserTransactions.tsx
 "use client";
-import React, { useMemo } from "react";
+import React, { useMemo, useState } from "react";
 import { useUser } from "@/hooks/useUser";
+import Image from "next/image";
+import { Copy } from "lucide-react";
+
+interface DepositHistoryItem {
+  date: string;
+  transactionId?: string;
+  amount: number;
+  receiptUrl?: string;
+}
 
 interface Transaction {
   date: string;
@@ -15,23 +24,33 @@ interface Transaction {
 
 const UserTransactions: React.FC = () => {
   const { data, isLoading } = useUser();
+  const [copiedId, setCopiedId] = useState<string | null>(null);
+
+  const handleCopy = (id: string) => {
+    navigator.clipboard.writeText(id).then(() => {
+      setCopiedId(id);
+      setTimeout(() => setCopiedId(null), 2000); // reset after 2s
+    });
+  };
 
   // Transform depositHistory into our table-friendly format
   const transactions: Transaction[] = useMemo(() => {
     if (data?.success && data?.data?.depositHistory) {
-      return data.data.depositHistory.map((tx: any, idx: number) => ({
-        date: new Date(tx.date).toLocaleDateString("en-US", {
-          year: "numeric",
-          month: "short",
-          day: "numeric",
-        }),
-        id: tx.transactionId || `TXN-${idx + 1}`,
-        amount: `$${tx.amount}`,
-        wallet: "Deposit Wallet",
-        details: "Deposit",
-        postBalance: `$${tx.amount}`, // 🔑 you can replace with running balance if API provides
-        receiptUrl: tx.receiptUrl,
-      }));
+      return (data.data.depositHistory as DepositHistoryItem[]).map(
+        (tx, idx) => ({
+          date: new Date(tx.date).toLocaleDateString("en-US", {
+            year: "numeric",
+            month: "short",
+            day: "numeric",
+          }),
+          id: tx.transactionId || `TXN-${idx + 1}`,
+          amount: `$${tx.amount}`,
+          wallet: "Deposit Wallet",
+          details: "Deposit",
+          postBalance: `$${tx.amount}`, // 🔑 replace if API provides running balance
+          receiptUrl: tx.receiptUrl,
+        })
+      );
     }
     return [];
   }, [data]);
@@ -73,7 +92,21 @@ const UserTransactions: React.FC = () => {
                       className="hover:bg-white/5 transition-colors"
                     >
                       <td className="px-4 py-3">{tx.date}</td>
-                      <td className="px-4 py-3">{tx.id}</td>
+                      <td className="px-4 py-3 flex items-center gap-2">
+                        {tx.id}
+                        <button
+                          onClick={() => handleCopy(tx.id)}
+                          className="p-1 rounded-md hover:bg-white/10 transition"
+                          title="Copy Transaction ID"
+                        >
+                          <Copy size={16} className="text-gray-300" />
+                        </button>
+                        {copiedId === tx.id && (
+                          <span className="text-green-400 text-xs">
+                            Copied!
+                          </span>
+                        )}
+                      </td>
                       <td className="px-4 py-3 text-green-400">{tx.amount}</td>
                       <td className="px-4 py-3">{tx.wallet}</td>
                       <td className="px-4 py-3">{tx.details}</td>
@@ -85,9 +118,11 @@ const UserTransactions: React.FC = () => {
                             target="_blank"
                             rel="noopener noreferrer"
                           >
-                            <img
+                            <Image
                               src={tx.receiptUrl}
                               alt="Receipt"
+                              width={48}
+                              height={48}
                               className="h-12 w-12 object-cover rounded-lg border border-white/20 hover:scale-105 transition-transform"
                             />
                           </a>
@@ -111,9 +146,19 @@ const UserTransactions: React.FC = () => {
                   <p>
                     <span className="font-semibold">Date:</span> {tx.date}
                   </p>
-                  <p>
+                  <p className="flex items-center gap-2">
                     <span className="font-semibold">Transaction ID:</span>{" "}
                     {tx.id}
+                    <button
+                      onClick={() => handleCopy(tx.id)}
+                      className="p-1 rounded-md hover:bg-white/10 transition"
+                      title="Copy Transaction ID"
+                    >
+                      <Copy size={16} className="text-gray-300" />
+                    </button>
+                    {copiedId === tx.id && (
+                      <span className="text-green-400 text-xs">Copied!</span>
+                    )}
                   </p>
                   <p>
                     <span className="font-semibold">Amount:</span>{" "}
@@ -137,9 +182,11 @@ const UserTransactions: React.FC = () => {
                         target="_blank"
                         rel="noopener noreferrer"
                       >
-                        <img
+                        <Image
                           src={tx.receiptUrl}
                           alt="Receipt"
+                          width={300}
+                          height={200}
                           className="mt-2 h-32 w-full object-cover rounded-lg border border-white/20 hover:scale-105 transition-transform"
                         />
                       </a>
