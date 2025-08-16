@@ -1,15 +1,29 @@
 "use client";
-import React, { useState, useRef, useCallback } from "react";
+import React, { useState, useEffect, useRef, useCallback } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
-import { UploadCloud } from "lucide-react";
+import { Copy, Check, UploadCloud } from "lucide-react";
 import Image from "next/image";
+import { useDeposit } from "@/hooks/useDeposit";
+import { useUser } from "@/hooks/useUser";
+import { uploadToCloudinary } from "@/hooks/uploadImage";
 
 export default function DepositPreviewPage() {
   const router = useRouter();
   const params = useSearchParams();
-  const amount = params.get("amount");
+  const amount = Number(params.get("amount") || 0);
   const btcAddress = "bc1qexamplebtcaddresshere";
 
+  const [copied, setCopied] = useState(false);
+  const [toast, setToast] = useState<{
+    message: string;
+    type: "success" | "error";
+  } | null>(null);
+
+  const { mutate: deposit, isPending } = useDeposit();
+  const { data: userData } = useUser();
+  const email = userData?.data?.email || "";
+
+  // Upload-related states
   const [transactionId, setTransactionId] = useState("");
   const [receiptFile, setReceiptFile] = useState<File | null>(null);
   const [previewUrl, setPreviewUrl] = useState<string | null>(null);
@@ -17,6 +31,37 @@ export default function DepositPreviewPage() {
   const [dragActive, setDragActive] = useState(false);
   const inputRef = useRef<HTMLInputElement>(null);
 
+  // Copy BTC address
+  const handleCopy = async () => {
+    try {
+      await navigator.clipboard.writeText(btcAddress);
+      setCopied(true);
+    } catch {
+      setCopied(false);
+    }
+  };
+
+  // Auto-hide copied message
+  useEffect(() => {
+    if (copied) {
+      const timeout = setTimeout(() => setCopied(false), 2000);
+      return () => clearTimeout(timeout);
+    }
+  }, [copied]);
+
+  // Auto-hide toast
+  useEffect(() => {
+    if (toast) {
+      const timeout = setTimeout(() => setToast(null), 3000);
+      return () => clearTimeout(timeout);
+    }
+  }, [toast]);
+
+  const showToast = (message: string, type: "success" | "error") => {
+    setToast({ message, type });
+  };
+
+  // File handling
   const handleFile = useCallback((file: File) => {
     setError("");
     if (!file.type.startsWith("image/")) {
@@ -31,7 +76,7 @@ export default function DepositPreviewPage() {
   }, []);
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    if (e.target.files && e.target.files.length > 0) {
+    if (e.target.files?.length) {
       handleFile(e.target.files[0]);
     }
   };
@@ -39,27 +84,26 @@ export default function DepositPreviewPage() {
   const handleDrag = (e: React.DragEvent<HTMLDivElement>) => {
     e.preventDefault();
     e.stopPropagation();
-
-    if (e.type === "dragenter" || e.type === "dragover") {
-      setDragActive(true);
-    } else if (e.type === "dragleave") {
-      setDragActive(false);
-    }
+    setDragActive(e.type === "dragenter" || e.type === "dragover");
   };
 
   const handleDrop = (e: React.DragEvent<HTMLDivElement>) => {
     e.preventDefault();
     e.stopPropagation();
     setDragActive(false);
-
-    if (e.dataTransfer.files && e.dataTransfer.files.length > 0) {
+    if (e.dataTransfer.files?.length) {
       handleFile(e.dataTransfer.files[0]);
       e.dataTransfer.clearData();
     }
   };
 
+  // Confirm & upload
   const handleConfirm = async () => {
     setError("");
+    if (!email) {
+      showToast("User email not found", "error");
+      return;
+    }
     if (!receiptFile) {
       setError("Please upload your transaction receipt image.");
       return;
@@ -69,61 +113,85 @@ export default function DepositPreviewPage() {
       return;
     }
 
-    try {
-      // TODO: upload receiptFile, transactionId, amount, btcAddress to your backend here
-
-      // Simulate delay
-      await new Promise((res) => setTimeout(res, 1000));
-
-      router.push("/deposit/success");
-    } catch {
-      setError("Failed to submit deposit proof. Please try again.");
-    }
+    const imageUrl = await uploadToCloudinary(receiptFile);
+    console.log(imageUrl);
+    // Send all data to backend
+    deposit(
+      { email, amount, transactionId, receiptUrl: imageUrl },
+      {
+        onSuccess: (data) => {
+          showToast(
+            `Deposit successful! New balance: ${data.depositBalance}`,
+            "success"
+          );
+          router.push("/dashboard");
+        },
+        onError: () => {
+          showToast("Failed to deposit, please try again", "error");
+        },
+      }
+    );
   };
 
   return (
-    <div className="flex justify-center items-center min-h-screen relative overflow-hidden px-4 sm:px-8 md:px-12 py-8 sm:py-12 ">
-      {/* Decorative background blobs - hidden on small screens */}
-      <div className="hidden lg:block absolute top-24 left-24 w-72 sm:w-96 h-72 sm:h-96 bg-yellow-400/20 rounded-full blur-3xl pointer-events-none" />
-      <div className="hidden lg:block absolute bottom-24 right-24 w-72 sm:w-96 h-72 sm:h-96 bg-indigo-500/20 rounded-full blur-3xl pointer-events-none" />
+    <div className="flex justify-center items-center min-h-screen relative overflow-hidden px-4 sm:px-6 md:px-12 py-8 sm:py-12">
+      {/* Toast Notification */}
+      {toast && (
+        <div
+          className={`fixed top-6 right-6 px-4 py-3 rounded-lg shadow-lg text-white z-50 ${
+            toast.type === "success" ? "bg-green-500" : "bg-red-500"
+          }`}
+        >
+          {toast.message}
+        </div>
+      )}
 
-      {/* Glass card container */}
-      <div
-        className="relative w-full max-w-md sm:max-w-4xl lg:max-w-6xl backdrop-blur-xl bg-white/10 border border-white/20 rounded-4xl shadow-2xl
-          p-8 sm:p-12 text-white flex flex-col lg:flex-row gap-8 lg:gap-16 overflow-hidden"
-      >
-        {/* Shimmer Overlay */}
-        <div className="absolute inset-0 pointer-events-none bg-gradient-to-r from-transparent via-white/10 to-transparent animate-[shimmer_2.5s_infinite] rounded-4xl" />
+      {/* Background */}
+      <div className="hidden md:block absolute top-24 left-24 w-72 sm:w-96 h-72 bg-yellow-400/20 rounded-full blur-3xl" />
+      <div className="hidden md:block absolute bottom-24 right-24 w-72 sm:w-96 h-72 bg-indigo-500/20 rounded-full blur-3xl" />
 
-        {/* Left info side */}
-        <div className="flex-1 flex flex-col gap-6 z-10">
-          <h2 className="text-3xl sm:text-4xl md:text-5xl font-extrabold tracking-tight drop-shadow-lg">
-            Confirm Deposit
+      {/* Card */}
+      <div className="relative w-full max-w-5xl backdrop-blur-xl bg-white/10 border border-white/20 rounded-3xl shadow-2xl p-8 sm:p-14 z-10 text-white flex flex-col lg:flex-row gap-8">
+        {/* Left side: BTC & Amount */}
+        <div className="flex-1">
+          <h2 className="text-3xl sm:text-4xl font-extrabold mb-8 text-center">
+            Preview Deposit
           </h2>
-
-          <div>
-            <p className="text-gray-300 mb-2 font-semibold tracking-wide uppercase text-sm sm:text-base">
+          {/* BTC Address */}
+          <div className="mb-8">
+            <p className="text-gray-300 mb-2 font-semibold uppercase flex justify-between">
               Bitcoin Address
+              <button
+                onClick={handleCopy}
+                className="flex items-center gap-1 text-sm"
+              >
+                {copied ? (
+                  <>
+                    <Check size={16} /> Copied
+                  </>
+                ) : (
+                  <>
+                    <Copy size={16} /> Copy
+                  </>
+                )}
+              </button>
             </p>
-            <p className="font-mono text-sm sm:text-base md:text-lg text-gray-100 bg-white/10 border border-white/30 p-4 rounded-xl select-all break-words shadow-sm">
+            <p className="font-mono bg-white/10 border border-white/30 p-4 rounded-lg">
               {btcAddress}
             </p>
           </div>
 
-          <div>
-            <p className="text-gray-300 mb-2 font-semibold tracking-wide uppercase text-sm sm:text-base">
+          {/* Amount */}
+          <div className="mb-8">
+            <p className="text-gray-300 mb-2 font-semibold uppercase">
               Deposit Amount
             </p>
-            <p className="font-bold text-xl sm:text-2xl md:text-3xl tracking-wide">
-              {amount} BTC
-            </p>
+            <p className="font-bold text-2xl">{amount} BTC</p>
           </div>
 
-          <div className="flex flex-col">
-            <label
-              htmlFor="transactionId"
-              className="mb-2 sm:mb-3 text-base sm:text-lg font-semibold tracking-wide"
-            >
+          {/* Transaction ID */}
+          <div>
+            <label htmlFor="transactionId" className="block mb-2 font-semibold">
               Transaction ID *
             </label>
             <input
@@ -132,110 +200,69 @@ export default function DepositPreviewPage() {
               placeholder="Enter your transaction ID"
               value={transactionId}
               onChange={(e) => setTransactionId(e.target.value)}
-              className="p-3 sm:p-5 rounded-2xl bg-white/15 border border-white/30 placeholder-white/50 text-white
-                focus:outline-none focus:ring-4 focus:ring-yellow-400 transition-shadow text-sm sm:text-base"
+              className="w-full p-3 rounded-lg bg-white/15 border border-white/30"
             />
           </div>
         </div>
 
-        {/* Right upload + preview side */}
-        <div className="flex-1 flex flex-col gap-6 z-10">
+        {/* Right side: Upload */}
+        <div className="flex-1">
           <div
             onDragEnter={handleDrag}
             onDragOver={handleDrag}
             onDragLeave={handleDrag}
             onDrop={handleDrop}
             onClick={() => inputRef.current?.click()}
-            role="button"
-            tabIndex={0}
-            onKeyDown={(e) => e.key === "Enter" && inputRef.current?.click()}
-            aria-label="Upload deposit receipt image"
-            className={`relative cursor-pointer rounded-3xl border-4 border-dashed border-white/30 bg-white/5 flex flex-col items-center justify-center
-              p-12 sm:p-16 text-center transition 
-              ${
-                dragActive ? "border-yellow-400 bg-yellow-400/10 shadow-lg" : ""
-              }
-              hover:border-yellow-400 hover:bg-yellow-400/10 hover:shadow-lg
-              select-none
-            `}
+            className={`border-4 border-dashed rounded-3xl p-10 text-center cursor-pointer ${
+              dragActive
+                ? "border-yellow-400 bg-yellow-400/10"
+                : "border-white/30 bg-white/5"
+            }`}
           >
-            <UploadCloud
-              size={48}
-              className="mb-4 sm:mb-6 text-yellow-400 drop-shadow-md"
-            />
-            <p className="text-white text-xl sm:text-2xl font-semibold mb-1">
-              Drag & drop your receipt here
-            </p>
-            <p className="text-yellow-300 text-lg sm:text-xl font-medium">
-              or click to browse
-            </p>
-            <p className="text-yellow-300 mt-3 sm:mt-4 font-light text-xs sm:text-sm">
-              (Only image files supported)
-            </p>
+            <UploadCloud size={48} className="mb-4 text-yellow-400" />
+            <p>Drag & drop your receipt here</p>
+            <p className="text-yellow-300">or click to browse</p>
             <input
               type="file"
               accept="image/*"
               ref={inputRef}
               onChange={handleChange}
-              className="absolute inset-0 opacity-0 cursor-pointer"
-              tabIndex={-1}
+              className="hidden"
             />
           </div>
 
-          {/* Preview */}
           {previewUrl && (
             <Image
               src={previewUrl}
               alt="Receipt preview"
-              className="rounded-3xl w-full h-auto object-contain shadow-2xl border border-white/30"
               width={600}
               height={400}
+              className="rounded-3xl mt-4"
               unoptimized
             />
           )}
 
-          {/* Error message */}
-          {error && (
-            <p className="text-red-400 font-semibold text-center mt-1 text-sm sm:text-base">
-              {error}
-            </p>
-          )}
+          {error && <p className="text-red-400 mt-2">{error}</p>}
 
-          {/* Buttons */}
-          <div className="flex flex-col sm:flex-row gap-6 mt-auto">
+          <div className="flex gap-4 mt-6">
             <button
               onClick={() => router.back()}
-              className="flex-1 bg-white/20 hover:bg-white/30 text-white font-semibold py-3 rounded-3xl transition-shadow shadow-sm text-base sm:text-lg"
+              className="flex-1 bg-white/20 py-3 rounded-3xl"
             >
               Cancel
             </button>
             <button
               onClick={handleConfirm}
-              className="flex-1 bg-gradient-to-r from-yellow-400 to-yellow-500 hover:from-yellow-500 hover:to-yellow-600
-              text-black font-bold py-3 rounded-3xl transition-shadow shadow-lg text-base sm:text-lg"
+              disabled={isPending}
+              className={`flex-1 bg-gradient-to-r from-yellow-400 to-yellow-500 text-black font-bold py-3 rounded-3xl ${
+                isPending ? "opacity-60" : ""
+              }`}
             >
-              Submit Deposit Proof
+              {isPending ? "Processing..." : "Confirm Deposit"}
             </button>
           </div>
         </div>
       </div>
-
-      {/* Shimmer keyframes */}
-      <style>{`
-        @keyframes shimmer {
-          0% {
-            background-position: -700px 0;
-          }
-          100% {
-            background-position: 700px 0;
-          }
-        }
-        .animate-[shimmer_2.5s_infinite] {
-          background-size: 1400px 100%;
-          background-repeat: no-repeat;
-          animation: shimmer 2.5s linear infinite;
-        }
-      `}</style>
     </div>
   );
 }

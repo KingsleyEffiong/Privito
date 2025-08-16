@@ -6,6 +6,7 @@ import Background from "@/components/shared/Background";
 import Image from "next/image";
 import { useRouter } from "next/navigation";
 import useAuth from "@/hooks/useAuth";
+import { createSession } from "@/libs/sessions";
 
 function Page() {
   const router = useRouter();
@@ -32,6 +33,10 @@ function Page() {
       }
 
       router.push("/dashboard");
+      await createSession({
+        token: res.data.token,
+        user: { _id: res.data.user.id },
+      });
     } catch (error: unknown) {
       if (error instanceof Error) {
         setError(error.message);

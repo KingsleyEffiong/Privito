@@ -32,7 +32,7 @@ export default function useAuth() {
       const { token, user } = res.data?.data || {};
 
       await createSession({
-        user: { _id: user?.id || "" },
+        user: { _id: user?._id || "" },
         token,
       });
 
@@ -56,7 +56,7 @@ export default function useAuth() {
       const { token, user } = res.data?.data || {};
 
       await createSession({
-        user: { _id: user?.id || "" },
+        user: { _id: user?._id || "" },
         token,
       });
 
@@ -128,11 +128,10 @@ export default function useAuth() {
   async function logoutUser() {
     try {
       await deleteSession();
-      localStorage.removeItem("DefaultSocial");
-      localStorage.removeItem("selectedSocial");
       window.location.href = "/login";
     } catch (error) {
       console.error("Logout failed:", error);
+      return;
     }
   }
 

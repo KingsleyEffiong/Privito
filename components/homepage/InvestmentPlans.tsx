@@ -6,8 +6,7 @@ const plans = [
   {
     name: "Starter Plan",
     price: "$100",
-    returns: "5% Weekly",
-    duration: "1 Month",
+    returns: "1% Daily",
     features: [
       "Basic Dashboard Access",
       "Secure Transactions",
@@ -18,16 +17,14 @@ const plans = [
   {
     name: "Pro Plan",
     price: "$500",
-    returns: "8% Weekly",
-    duration: "3 Months",
+    returns: "4% Daily",
     features: ["Advanced Dashboard", "Priority Support", "Investment Reports"],
     popular: true,
   },
   {
     name: "Premium Plan",
     price: "$1000",
-    returns: "12% Weekly",
-    duration: "6 Months",
+    returns: "8% Daily",
     features: [
       "All Pro Features",
       "Dedicated Account Manager",
@@ -73,7 +70,6 @@ export default function InvestmentPlans() {
                 <div className="text-blue-300 font-medium mb-1">
                   {plan.returns}
                 </div>
-                <p className="text-gray-400 mb-6">{plan.duration} Duration</p>
                 <ul className="space-y-3 text-sm text-gray-200 mb-6">
                   {plan.features.map((feature, i) => (
                     <li key={i} className="flex items-center gap-2">
@@ -101,13 +97,12 @@ export default function InvestmentPlans() {
 
               {/* BACK */}
               <div className="absolute inset-0 bg-gradient-to-br from-blue-900/20 to-black/40 backdrop-blur-md border border-white/10 p-8 rounded-2xl text-center [transform:rotateY(180deg)] [backface-visibility:hidden] flex flex-col justify-center items-center shadow-inner shadow-blue-500/10">
-                <h3 className="text-2xl font-bold mb-4">{plan.name}</h3>
+                <h3 className="text-2xl font-bold mb-4">{plan.name} </h3>
                 <p className="text-gray-300 mb-6 max-w-xs">
-                  Dive deeper into the {plan.name.toLowerCase()} with{" "}
+                  Dive deeper into the {plan.name.toLowerCase()}
                   <span className="text-blue-400 font-semibold">
                     {plan.returns}
                   </span>{" "}
-                  return for {plan.duration.toLowerCase()}.
                 </p>
                 <button className="w-full bg-gradient-to-r from-blue-500 to-purple-600 hover:from-purple-600 hover:to-blue-500 text-white font-semibold py-3 rounded-lg transition duration-300 hover:shadow-xl hover:shadow-purple-500/20">
                   Invest Now
