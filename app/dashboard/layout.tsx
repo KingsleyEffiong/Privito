@@ -22,8 +22,6 @@ const DashboardLayout: React.FC<DashboardLayoutProps> = ({ children }) => {
       ? ""
       : "Guest";
 
-     
-
   // Automatically trigger interest if 24h passed
   useEffect(() => {
     if (!data?.success || !data.data?._id) return;
@@ -62,7 +60,7 @@ const DashboardLayout: React.FC<DashboardLayoutProps> = ({ children }) => {
       <div className="w-full max-w-6xl">
         <DashboardNavbar
           title="Dashboard"
-          referralLink="https://privito.com/referral"
+          // referralLink="https://privito.com/referral"
           userName={userName}
           loading={isLoading}
         />

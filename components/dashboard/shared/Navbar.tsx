@@ -6,14 +6,14 @@ import useAuth from "@/hooks/useAuth";
 
 interface DashboardNavbarProps {
   title: string;
-  referralLink: string;
+  // referralLink: string;
   userName: string;
   loading?: boolean; // ✅ new prop
 }
 
 const DashboardNavbar: React.FC<DashboardNavbarProps> = ({
   title,
-  referralLink,
+  // referralLink,
   userName,
   loading = false,
 }) => {
@@ -27,9 +27,12 @@ const DashboardNavbar: React.FC<DashboardNavbarProps> = ({
   return (
     <nav className="w-full backdrop-blur-lg bg-white/10 border-b border-white/20 px-4 py-3 md:px-6 md:py-4 flex items-center justify-between rounded-b-2xl shadow-lg fixed top-0 left-0 z-50">
       {/* Left - Title */}
-      <h1 className="text-xl md:text-2xl font-bold text-white drop-shadow-md">
+      <Link
+        href="/dashboard"
+        className="text-xl md:text-2xl font-bold text-white drop-shadow-md"
+      >
         {title}
-      </h1>
+      </Link>
 
       {/* Right section */}
       <div className="flex items-center gap-3">
@@ -60,7 +63,7 @@ const DashboardNavbar: React.FC<DashboardNavbarProps> = ({
           </Link>
 
           {/* Referral Link */}
-          <div className="flex items-center gap-2">
+          {/* <div className="flex items-center gap-2">
             <span className="text-sm text-gray-200 bg-white/10 px-3 py-1 rounded-md border border-white/20 truncate max-w-[150px]">
               {referralLink}
             </span>
@@ -70,7 +73,7 @@ const DashboardNavbar: React.FC<DashboardNavbarProps> = ({
             >
               Copy
             </button>
-          </div>
+          </div> */}
 
           {/* Divider */}
           <div className="w-px h-6 bg-white/30" />
@@ -110,7 +113,7 @@ const DashboardNavbar: React.FC<DashboardNavbarProps> = ({
           </Link>
 
           {/* Referral Link */}
-          <div className="flex items-center gap-2">
+          {/* <div className="flex items-center gap-2">
             <span className="text-xs text-gray-200 bg-white/10 px-2 py-1 rounded-md border border-white/20 truncate max-w-[120px]">
               {referralLink}
             </span>
@@ -120,7 +123,7 @@ const DashboardNavbar: React.FC<DashboardNavbarProps> = ({
             >
               Copy
             </button>
-          </div>
+          </div> */}
 
           {/* Profile with shimmer */}
           {loading ? (

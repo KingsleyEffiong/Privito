@@ -71,7 +71,7 @@ export default function DepositPreviewPage() {
       {/* Card */}
       <div className="relative w-full max-w-md sm:max-w-3xl md:max-w-4xl backdrop-blur-xl bg-white/10 border border-white/20 rounded-3xl shadow-2xl p-8 sm:p-14 z-10 text-white">
         <h2 className="text-3xl sm:text-4xl md:text-5xl font-extrabold mb-6 sm:mb-8 md:mb-10 text-center drop-shadow-lg">
-          Preview Deposit
+          Deposit Preview
         </h2>
 
         {/* BTC Address */}
@@ -106,7 +106,7 @@ export default function DepositPreviewPage() {
             Deposit Amount
           </p>
           <p className="font-bold text-2xl sm:text-3xl md:text-4xl tracking-wide">
-            {amount} BTC
+            {amount} $
           </p>
         </div>
 

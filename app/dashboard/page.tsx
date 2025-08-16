@@ -33,7 +33,7 @@ const Page: React.FC = () => {
     { label: "Total Deposit", value: totalDeposit },
     { label: "Interest Wallet Balance", value: totalInterest },
     { label: "Total Withdraw", value: 0 },
-    { label: "Referral Earnings", value: 0 },
+    // { label: "Referral Earnings", value: 0 },
   ];
 
   return (

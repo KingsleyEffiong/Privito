@@ -23,7 +23,7 @@ export default function DepositPage() {
     const value = parseFloat(amount);
 
     if (isNaN(value) || value < 10 || value > 1000000) {
-      showToast("Amount must be between 10 and 1,000,000 BTC");
+      showToast("Amount must be between 10 and 1,000,000 dollars");
       return;
     }
     router.push(`/dashboard/deposit/preview-deposit?amount=${amount}`);
@@ -38,7 +38,7 @@ export default function DepositPage() {
       {/* Glass card */}
       <div className="backdrop-blur-xl bg-white/10 border border-white/20 rounded-3xl shadow-2xl p-6 sm:p-12 w-full max-w-md sm:max-w-4xl z-10 text-white">
         <h2 className="text-3xl sm:text-5xl font-extrabold mb-8 sm:mb-10 text-center drop-shadow-lg">
-          Deposit Bitcoin
+          Deposit
         </h2>
 
         {/* BTC address display */}
@@ -56,7 +56,7 @@ export default function DepositPage() {
 
         {/* Deposit amount input */}
         <label className="block text-gray-200 font-semibold mb-2 text-lg sm:text-xl">
-          Deposit Amount (BTC)
+          Deposit Amount ($)
         </label>
         <input
           type="number"

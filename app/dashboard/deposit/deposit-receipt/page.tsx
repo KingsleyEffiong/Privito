@@ -19,7 +19,7 @@ export default function DepositPreviewPage() {
     type: "success" | "error";
   } | null>(null);
 
-  const { mutate: deposit, isPending } = useDeposit();
+  const { mutate: deposit } = useDeposit();
   const { data: userData } = useUser();
   const email = userData?.data?.email || "";
 
@@ -30,6 +30,9 @@ export default function DepositPreviewPage() {
   const [error, setError] = useState("");
   const [dragActive, setDragActive] = useState(false);
   const inputRef = useRef<HTMLInputElement>(null);
+
+  // 👇 local submitting state for instant feedback
+  const [submitting, setSubmitting] = useState(false);
 
   // Copy BTC address
   const handleCopy = async () => {
@@ -71,8 +74,7 @@ export default function DepositPreviewPage() {
       return;
     }
     setReceiptFile(file);
-    const url = URL.createObjectURL(file);
-    setPreviewUrl(url);
+    setPreviewUrl(URL.createObjectURL(file));
   }, []);
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -99,38 +101,50 @@ export default function DepositPreviewPage() {
 
   // Confirm & upload
   const handleConfirm = async () => {
+    setSubmitting(true); // 🔥 Instant feedback
     setError("");
+
     if (!email) {
       showToast("User email not found", "error");
+      setSubmitting(false);
       return;
     }
     if (!receiptFile) {
       setError("Please upload your transaction receipt image.");
+      setSubmitting(false);
       return;
     }
     if (!transactionId.trim()) {
       setError("Please enter your transaction ID.");
+      setSubmitting(false);
       return;
     }
 
-    const imageUrl = await uploadToCloudinary(receiptFile);
-    console.log(imageUrl);
-    // Send all data to backend
-    deposit(
-      { email, amount, transactionId, receiptUrl: imageUrl },
-      {
-        onSuccess: (data) => {
-          showToast(
-            `Deposit successful! New balance: ${data.depositBalance}`,
-            "success"
-          );
-          router.push("/dashboard");
-        },
-        onError: () => {
-          showToast("Failed to deposit, please try again", "error");
-        },
-      }
-    );
+    try {
+      const imageUrl = await uploadToCloudinary(receiptFile);
+
+      deposit(
+        { email, amount, transactionId, receiptUrl: imageUrl },
+        {
+          onSuccess: (data) => {
+            showToast(
+              `Deposit successful! New balance: ${data.depositBalance}`,
+              "success"
+            );
+            router.push("/dashboard");
+          },
+          onError: () => {
+            showToast("Failed to deposit, please try again", "error");
+          },
+          onSettled: () => {
+            setSubmitting(false); // 🔥 Reset once finished
+          },
+        }
+      );
+    } catch (err) {
+      setError("Image upload failed. Please try again.");
+      setSubmitting(false);
+    }
   };
 
   return (
@@ -146,17 +160,10 @@ export default function DepositPreviewPage() {
         </div>
       )}
 
-      {/* Background */}
-      <div className="hidden md:block absolute top-24 left-24 w-72 sm:w-96 h-72 bg-yellow-400/20 rounded-full blur-3xl" />
-      <div className="hidden md:block absolute bottom-24 right-24 w-72 sm:w-96 h-72 bg-indigo-500/20 rounded-full blur-3xl" />
-
       {/* Card */}
       <div className="relative w-full max-w-5xl backdrop-blur-xl bg-white/10 border border-white/20 rounded-3xl shadow-2xl p-8 sm:p-14 z-10 text-white flex flex-col lg:flex-row gap-8">
-        {/* Left side: BTC & Amount */}
+        {/* Left side */}
         <div className="flex-1">
-          <h2 className="text-3xl sm:text-4xl font-extrabold mb-8 text-center">
-            Preview Deposit
-          </h2>
           {/* BTC Address */}
           <div className="mb-8">
             <p className="text-gray-300 mb-2 font-semibold uppercase flex justify-between">
@@ -186,7 +193,7 @@ export default function DepositPreviewPage() {
             <p className="text-gray-300 mb-2 font-semibold uppercase">
               Deposit Amount
             </p>
-            <p className="font-bold text-2xl">{amount} BTC</p>
+            <p className="font-bold text-2xl">{amount} $</p>
           </div>
 
           {/* Transaction ID */}
@@ -253,12 +260,12 @@ export default function DepositPreviewPage() {
             </button>
             <button
               onClick={handleConfirm}
-              disabled={isPending}
+              disabled={submitting}
               className={`flex-1 bg-gradient-to-r from-yellow-400 to-yellow-500 text-black font-bold py-3 rounded-3xl ${
-                isPending ? "opacity-60" : ""
+                submitting ? "opacity-60" : ""
               }`}
             >
-              {isPending ? "Processing..." : "Confirm Deposit"}
+              {submitting ? "Processing..." : "Confirm Deposit"}
             </button>
           </div>
         </div>
