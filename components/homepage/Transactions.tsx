@@ -1,133 +1,45 @@
 "use client";
 
-import React, { JSX, useState } from "react";
-import {
-  CheckCircle,
-  Clock,
-  XCircle,
-  ArrowDownLeft,
-  ArrowUpRight,
-  TrendingUp,
-} from "lucide-react";
+import { useState, useMemo, useEffect, type JSX } from "react";
+import { CheckCircle, ArrowDownLeft, ArrowUpRight } from "lucide-react";
+import { mockTransactions, type Transaction } from "@/data/mockTransactions";
 
-type Status = "Completed" | "Pending" | "Failed";
-
-interface Transaction {
-  id: string;
-  type: string;
-  amount: number;
-  currency: string;
-  date: string;
-  status: Status;
-}
-
-const allTransactions: Transaction[] = [
-  {
-    id: "TXN-1001",
-    type: "Deposit",
-    amount: 5000,
-    currency: "USD",
-    date: "2025-08-01",
-    status: "Completed",
-  },
-  {
-    id: "TXN-1002",
-    type: "Withdrawal",
-    amount: -2000,
-    currency: "USD",
-    date: "2025-08-02",
-    status: "Pending",
-  },
-  {
-    id: "TXN-1003",
-    type: "Investment",
-    amount: -1500,
-    currency: "USD",
-    date: "2025-08-03",
-    status: "Completed",
-  },
-  {
-    id: "TXN-1004",
-    type: "Return",
-    amount: 600,
-    currency: "USD",
-    date: "2025-08-04",
-    status: "Completed",
-  },
-  {
-    id: "TXN-1005",
-    type: "Withdrawal",
-    amount: -800,
-    currency: "USD",
-    date: "2025-08-05",
-    status: "Failed",
-  },
-  {
-    id: "TXN-1006",
-    type: "Deposit",
-    amount: 3000,
-    currency: "USD",
-    date: "2025-08-06",
-    status: "Completed",
-  },
-  {
-    id: "TXN-1007",
-    type: "Investment",
-    amount: -2500,
-    currency: "USD",
-    date: "2025-08-07",
-    status: "Pending",
-  },
-  {
-    id: "TXN-1008",
-    type: "Withdrawal",
-    amount: -1000,
-    currency: "USD",
-    date: "2025-08-08",
-    status: "Completed",
-  },
-  {
-    id: "TXN-1009",
-    type: "Deposit",
-    amount: 7000,
-    currency: "USD",
-    date: "2025-08-09",
-    status: "Completed",
-  },
-  {
-    id: "TXN-1010",
-    type: "Return",
-    amount: 400,
-    currency: "USD",
-    date: "2025-08-10",
-    status: "Completed",
-  },
-];
-
-const statusColors: Record<Status, string> = {
-  Completed: "text-green-500",
-  Pending: "text-yellow-400",
-  Failed: "text-red-500",
-};
-
-const typeIcons: Record<string, JSX.Element> = {
+const typeIcons: Record<Transaction["type"], JSX.Element> = {
   Deposit: <ArrowDownLeft className="text-green-400 w-5 h-5" />,
   Withdrawal: <ArrowUpRight className="text-red-400 w-5 h-5" />,
-  Investment: <TrendingUp className="text-blue-400 w-5 h-5" />,
-  Return: <ArrowDownLeft className="text-emerald-400 w-5 h-5" />,
 };
+
+// ✅ Client-only safe date formatter
+function TransactionDate({ date }: { date: string }) {
+  const [formatted, setFormatted] = useState(date);
+
+  useEffect(() => {
+    setFormatted(new Date(date).toLocaleString());
+  }, [date]);
+
+  return <>{formatted}</>;
+}
 
 export default function Transactions() {
   const [currentPage, setCurrentPage] = useState(1);
-  const perPage = 4;
+  const perPage = 10;
 
-  const sortedTransactions = [...allTransactions].sort(
-    (a, b) => new Date(b.date).getTime() - new Date(a.date).getTime()
+  // Sort newest first
+  const sortedTransactions = useMemo(
+    () =>
+      [...mockTransactions].sort(
+        (a, b) => new Date(b.date).getTime() - new Date(a.date).getTime()
+      ),
+    []
   );
 
-  const visible = sortedTransactions.slice(
-    (currentPage - 1) * perPage,
-    currentPage * perPage
+  const visible = useMemo(
+    () =>
+      sortedTransactions.slice(
+        (currentPage - 1) * perPage,
+        currentPage * perPage
+      ),
+    [sortedTransactions, currentPage]
   );
 
   const totalPages = Math.ceil(sortedTransactions.length / perPage);
@@ -145,7 +57,12 @@ export default function Transactions() {
         <div className="bg-white/10 p-3 rounded-full">{typeIcons[tx.type]}</div>
         <div>
           <h3 className="font-semibold text-lg">{tx.type}</h3>
-          <p className="text-sm text-gray-400">{tx.date}</p>
+          <p className="text-sm text-gray-400">
+            <TransactionDate date={tx.date} />
+          </p>
+          <p className="text-xs text-gray-400">
+            <span className="opacity-70">ID:</span> {tx.id}
+          </p>
         </div>
       </div>
 
@@ -159,16 +76,8 @@ export default function Transactions() {
       </div>
 
       <div className="flex items-center gap-2">
-        {tx.status === "Completed" && (
-          <CheckCircle className="w-5 h-5 text-green-500" />
-        )}
-        {tx.status === "Pending" && (
-          <Clock className="w-5 h-5 text-yellow-400" />
-        )}
-        {tx.status === "Failed" && <XCircle className="w-5 h-5 text-red-500" />}
-        <span className={`text-sm font-medium ${statusColors[tx.status]}`}>
-          {tx.status}
-        </span>
+        <CheckCircle className="w-5 h-5 text-green-500" />
+        <span className="text-sm font-medium text-green-500">Completed</span>
       </div>
     </div>
   );
@@ -182,7 +91,7 @@ export default function Transactions() {
             Transaction Overview
           </h1>
           <p className="text-gray-400">
-            Track your deposits, withdrawals, investments and more in real time.
+            Track your deposits and withdrawals in real time.
           </p>
         </div>
 
