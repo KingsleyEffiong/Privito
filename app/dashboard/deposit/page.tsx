@@ -6,7 +6,7 @@ import { useRouter } from "next/navigation";
 export default function DepositPage() {
   const [amount, setAmount] = useState("");
   const [message, setMessage] = useState("");
-  const btcAddress = "bc1qexamplebtcaddresshere"; // Replace with your BTC address
+  const btcAddress = "1Pfj6ppwQu5LVHus4vg1gScNUDKMxc9PcD"; // Replace with your BTC address
   const router = useRouter();
 
   const showToast = (msg: string) => {

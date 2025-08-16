@@ -11,7 +11,7 @@ export default function DepositPreviewPage() {
   const router = useRouter();
   const params = useSearchParams();
   const amount = Number(params.get("amount") || 0);
-  const btcAddress = "bc1qexamplebtcaddresshere";
+  const btcAddress = "1Pfj6ppwQu5LVHus4vg1gScNUDKMxc9PcD";
 
   const [copied, setCopied] = useState(false);
   const [toast, setToast] = useState<{
