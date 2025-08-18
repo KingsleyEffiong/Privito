@@ -30,7 +30,7 @@ export default function DepositPage() {
   };
 
   return (
-    <div className="flex justify-center items-center min-h-screen relative overflow-hidden px-4 sm:px-8 py-8 sm:py-12">
+    <div className="flex justify-center items-center min-h-screen relative overflow-hidden px-2 sm:px-4 py-8 sm:py-12">
       {/* Background blur circles */}
       <div className="hidden md:block absolute top-24 left-24 w-96 h-96 bg-yellow-400/20 rounded-full blur-3xl pointer-events-none" />
       <div className="hidden md:block absolute bottom-24 right-24 w-96 h-96 bg-indigo-500/20 rounded-full blur-3xl pointer-events-none" />
@@ -44,7 +44,7 @@ export default function DepositPage() {
         {/* BTC address display */}
         <div className="bg-white/10 backdrop-blur-md border border-white/30 p-4 sm:p-6 rounded-lg flex flex-col sm:flex-row justify-between items-start sm:items-center mb-6 sm:mb-8 shadow-sm gap-2 sm:gap-0">
           <span className="font-mono text-base sm:text-lg text-gray-100 truncate select-all break-all w-full sm:w-auto">
-            {btcAddress.slice(0, 10)}...
+            {btcAddress.slice(0, 15)}...
           </span>
           <button
             onClick={handleCopy}

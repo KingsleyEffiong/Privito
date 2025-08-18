@@ -52,7 +52,7 @@ export default function DepositPreviewPage() {
   };
 
   return (
-    <div className="flex justify-center items-center min-h-screen relative overflow-hidden px-4 sm:px-6 md:px-12 py-8 sm:py-12">
+    <div className="flex justify-center items-center min-h-screen relative overflow-hidden px-2 sm:px-4 md:px-12 py-8 sm:py-12">
       {/* Toast Notification */}
       {toast && (
         <div
@@ -69,7 +69,7 @@ export default function DepositPreviewPage() {
       <div className="hidden md:block absolute bottom-24 right-24 w-72 sm:w-96 h-72 sm:h-96 bg-indigo-500/20 rounded-full blur-3xl pointer-events-none" />
 
       {/* Card */}
-      <div className="relative w-full max-w-md sm:max-w-3xl md:max-w-4xl backdrop-blur-xl bg-white/10 border border-white/20 rounded-3xl shadow-2xl p-8 sm:p-14 z-10 text-white">
+      <div className="relative w-full max-w-md sm:max-w-3xl md:max-w-4xl backdrop-blur-xl bg-white/10 border border-white/20 rounded-3xl shadow-2xl py-8 px-4 sm:p-14 z-10 text-white">
         <h2 className="text-3xl sm:text-4xl md:text-5xl font-extrabold mb-6 sm:mb-8 md:mb-10 text-center drop-shadow-lg">
           Deposit Preview
         </h2>

@@ -2,9 +2,12 @@
 "use client";
 
 import React, { useEffect, useState } from "react";
-import { Copy, Send, X, Check } from "lucide-react";
+import { Copy, Send, X, Check, Info } from "lucide-react";
+import { useUser } from "@/hooks/useUser";
+import CountUp from "react-countup";
 
 export default function WithdrawalPage() {
+  const { data, isLoading } = useUser();
   const [amount, setAmount] = useState<string>("");
   const [address, setAddress] = useState<string>("");
   const [error, setError] = useState<string>("");
@@ -18,6 +21,9 @@ export default function WithdrawalPage() {
   const MIN = 1;
   const MAX = 1_000_000;
 
+  const balance = data?.success ? data?.data?.depositBalance ?? 0 : 0;
+  const canWithdraw = balance >= 20_000;
+
   useEffect(() => {
     if (toast) {
       const t = setTimeout(() => setToast(null), 3500);
@@ -27,11 +33,18 @@ export default function WithdrawalPage() {
 
   const validate = () => {
     setError("");
+    if (!canWithdraw) {
+      if (balance === 0) {
+        return setError("You can’t withdraw until you’ve made a deposit.");
+      }
+      return setError("You need at least $20,000 to withdraw.");
+    }
     const n = parseFloat(amount);
     if (!amount || isNaN(n)) return setError("Enter a valid amount.");
     if (n < MIN) return setError(`Minimum withdrawal is ${MIN}.`);
     if (n > MAX)
       return setError(`Maximum withdrawal is ${MAX.toLocaleString()}.`);
+    if (n > balance) return setError("Insufficient balance.");
     if (!address || address.trim().length < 15)
       return setError("Enter a valid crypto address.");
     return true;
@@ -56,8 +69,12 @@ export default function WithdrawalPage() {
     setLoading(true);
     setError("");
     try {
+      // simulate request
       await new Promise((res) => setTimeout(res, 1200));
-      setToast({ type: "success", msg: `Withdrawal of ${amount} submitted` });
+      setToast({
+        type: "success",
+        msg: `Withdrawal of ${amount} submitted. Funds will reflect in 2 business days.`,
+      });
       setAmount("");
       setAddress("");
     } catch {
@@ -69,11 +86,7 @@ export default function WithdrawalPage() {
 
   return (
     <div className="min-h-screen flex items-center justify-center px-4 py-12">
-      {/* Main card */}
       <div className="relative w-full max-w-6xl rounded-3xl bg-white/5 border border-white/10 backdrop-blur-xl shadow-2xl overflow-hidden">
-        {/* Shimmer */}
-        <div className="absolute inset-0 pointer-events-none bg-gradient-to-r from-transparent via-white/5 to-transparent opacity-0 md:opacity-100 animate-[shimmer_3s_linear_infinite]" />
-
         <div className="relative z-10 grid grid-cols-1 lg:grid-cols-2 gap-8 p-6 sm:p-8 lg:p-12">
           {/* Left Info */}
           <div className="flex flex-col justify-between gap-6">
@@ -83,28 +96,36 @@ export default function WithdrawalPage() {
               </h1>
               <p className="text-sm text-white/70 max-w-lg">
                 Enter the amount and destination address. Withdrawals process
-                after network confirmation.
+                after verification.
               </p>
             </div>
 
             <div className="grid gap-4">
               <div className="rounded-2xl p-4 bg-white/5 border border-white/10">
-                <p className="text-xs text-white/60 uppercase">
-                  Available balance
-                </p>
                 <p className="text-xl font-semibold text-white mt-1">
-                  12,450.32 USD
+                  {isLoading ? (
+                    <span className="relative flex w-32 h-6 overflow-hidden rounded-md bg-rose-500/10 border border-rose-400/20 text-rose-300">
+                      <span className="absolute inset-0 -translate-x-full animate-[shimmer_1.5s_infinite] bg-gradient-to-r from-transparent via-white/20 to-transparent"></span>
+                    </span>
+                  ) : (
+                    <CountUp
+                      end={balance}
+                      duration={2}
+                      separator=","
+                      decimals={2}
+                    />
+                  )}
                 </p>
               </div>
-              <div className="rounded-2xl p-4 bg-white/5 border border-white/10">
-                <p className="text-xs text-white/60 uppercase">Network fees</p>
-                <p className="text-base text-white mt-1">
-                  Estimated: 0.0004 BTC
-                </p>
-                <p className="text-xs text-white/50 mt-1">
-                  Final amount will be shown before confirmation.
-                </p>
-              </div>
+
+              {!canWithdraw && (
+                <div className="flex items-center gap-2 p-3 rounded-xl bg-rose-500/10 border border-rose-400/20 text-rose-300 text-sm">
+                  <Info size={16} />
+                  {balance === 0
+                    ? "You can’t withdraw until you’ve made a deposit."
+                    : "Minimum $20,000 required before withdrawal."}
+                </div>
+              )}
             </div>
 
             <p className="text-xs text-white/60 mt-4">
@@ -132,7 +153,8 @@ export default function WithdrawalPage() {
                   value={amount}
                   onChange={(e) => setAmount(e.target.value)}
                   placeholder="0.00"
-                  className="w-full rounded-xl p-4 bg-transparent border border-white/10 text-white placeholder-white/40 focus:border-yellow-400 focus:ring-4 focus:ring-yellow-400/10 outline-none transition"
+                  disabled={!canWithdraw}
+                  className="w-full rounded-xl p-4 bg-transparent border border-white/10 text-white placeholder-white/40 focus:border-yellow-400 focus:ring-4 focus:ring-yellow-400/10 outline-none transition disabled:opacity-50"
                 />
               </label>
 
@@ -154,7 +176,8 @@ export default function WithdrawalPage() {
                   value={address}
                   onChange={(e) => setAddress(e.target.value)}
                   placeholder="e.g. bc1q... or 0x..."
-                  className="w-full rounded-xl p-4 bg-transparent border border-white/10 text-white placeholder-white/40 focus:border-yellow-400 focus:ring-4 focus:ring-yellow-400/10 outline-none transition"
+                  disabled={!canWithdraw}
+                  className="w-full rounded-xl p-4 bg-transparent border border-white/10 text-white placeholder-white/40 focus:border-yellow-400 focus:ring-4 focus:ring-yellow-400/10 outline-none transition disabled:opacity-50"
                 />
               </label>
 
@@ -169,8 +192,8 @@ export default function WithdrawalPage() {
               <div className="flex flex-col sm:flex-row gap-3">
                 <button
                   type="submit"
-                  disabled={loading}
-                  className="flex-1 flex items-center justify-center gap-2 rounded-2xl bg-gradient-to-r from-yellow-400 to-yellow-500 text-black font-semibold py-3 px-5 hover:from-yellow-500 hover:to-yellow-600 disabled:opacity-60 transition shadow-lg"
+                  disabled={loading || !canWithdraw}
+                  className="flex-1 flex items-center justify-center gap-2 rounded-2xl bg-gradient-to-r from-yellow-400 to-yellow-500 text-black font-semibold py-3 px-5 hover:from-yellow-500 hover:to-yellow-600 disabled:opacity-50 transition shadow-lg"
                 >
                   <Send size={18} /> {loading ? "Processing..." : "Withdraw"}
                 </button>
@@ -195,7 +218,7 @@ export default function WithdrawalPage() {
         </div>
       </div>
 
-      {/* Confirmation */}
+      {/* Confirmation Modal */}
       {confirmOpen && (
         <div className="fixed inset-0 z-50 flex items-center justify-center p-4">
           <div
@@ -207,7 +230,7 @@ export default function WithdrawalPage() {
               Confirm Withdrawal
             </h3>
             <p className="text-sm text-white/70 mb-4">
-              Check details before proceeding.
+              Funds will reflect in your account within <b>2 business days</b>.
             </p>
             <div className="rounded-xl p-4 bg-white/5 border border-white/10 mb-4">
               <p className="text-sm text-white/80">Amount</p>
@@ -252,19 +275,14 @@ export default function WithdrawalPage() {
           </div>
         </div>
       )}
-
-      {/* Shimmer animation */}
-      <style>{`
-        @keyframes shimmer {
-          0% { background-position: -700px 0; }
-          100% { background-position: 700px 0; }
-        }
-        .animate-[shimmer_3s_linear_infinite] {
-          background-size: 1400px 100%;
-          background-repeat: no-repeat;
-          animation: shimmer 3s linear infinite;
-        }
-      `}</style>
     </div>
   );
 }
+
+<style jsx>{`
+  @keyframes shimmer {
+    100% {
+      transform: translateX(100%);
+    }
+  }
+`}</style>;

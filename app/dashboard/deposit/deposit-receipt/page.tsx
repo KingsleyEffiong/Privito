@@ -12,6 +12,8 @@ export default function DepositPreviewPage() {
   const params = useSearchParams();
   const amount = Number(params.get("amount") || 0);
   const btcAddress = "1Pfj6ppwQu5LVHus4vg1gScNUDKMxc9PcD";
+  // ✅ TXID must be 64 hex chars
+  const isValidTxId = (txid: string) => /^[A-Fa-f0-9]{64}$/.test(txid);
 
   const [copied, setCopied] = useState(false);
   const [toast, setToast] = useState<{
@@ -101,7 +103,7 @@ export default function DepositPreviewPage() {
 
   // Confirm & upload
   const handleConfirm = async () => {
-    setSubmitting(true); // 🔥 Instant feedback
+    setSubmitting(true);
     setError("");
 
     if (!email) {
@@ -119,12 +121,24 @@ export default function DepositPreviewPage() {
       setSubmitting(false);
       return;
     }
+    if (!isValidTxId(transactionId.trim())) {
+      setError(
+        "Invalid transaction ID. Please enter a valid transaction id to confirm your deposit"
+      );
+      setSubmitting(false);
+      return;
+    }
 
     try {
       const imageUrl = await uploadToCloudinary(receiptFile);
 
       deposit(
-        { email, amount, transactionId, receiptUrl: imageUrl },
+        {
+          email,
+          amount,
+          transactionId: transactionId.trim(),
+          receiptUrl: imageUrl,
+        },
         {
           onSuccess: (data) => {
             showToast(
@@ -137,7 +151,7 @@ export default function DepositPreviewPage() {
             showToast("Failed to deposit, please try again", "error");
           },
           onSettled: () => {
-            setSubmitting(false); // 🔥 Reset once finished
+            setSubmitting(false);
           },
         }
       );
@@ -148,7 +162,7 @@ export default function DepositPreviewPage() {
   };
 
   return (
-    <div className="flex justify-center items-center min-h-screen relative overflow-hidden px-4 sm:px-6 md:px-12 py-8 sm:py-12">
+    <div className="flex justify-center items-center min-h-screen relative overflow-hidden px-4 sm:px-4 md:px-12 py-8 sm:py-12">
       {/* Toast Notification */}
       {toast && (
         <div
@@ -161,7 +175,7 @@ export default function DepositPreviewPage() {
       )}
 
       {/* Card */}
-      <div className="relative w-full max-w-5xl backdrop-blur-xl bg-white/10 border border-white/20 rounded-3xl shadow-2xl p-8 sm:p-14 z-10 text-white flex flex-col lg:flex-row gap-8">
+      <div className="relative w-full max-w-5xl backdrop-blur-xl bg-white/10 border border-white/20 rounded-3xl shadow-2xl py-8 px-4 sm:p-14 z-10 text-white flex flex-col lg:flex-row gap-8">
         {/* Left side */}
         <div className="flex-1">
           {/* BTC Address */}
@@ -251,7 +265,7 @@ export default function DepositPreviewPage() {
 
           {error && <p className="text-red-400 mt-2">{error}</p>}
 
-          <div className="flex gap-4 mt-6">
+          <div className="flex flex-col md:flex-row gap-4 mt-6">
             <button
               onClick={() => router.back()}
               className="flex-1 bg-white/20 py-3 rounded-3xl"
