@@ -21,7 +21,7 @@ export const metadata: Metadata = {
   keywords: ["Privito", "Investment", "Crypto", "Stocks"],
   metadataBase: new URL("https://privito.vercel.app"),
   openGraph: {
-    title: "Privit",
+    title: "Privito",
     description: "All in one investment platform for crypto, stocks, and more",
     url: "https://privito.vercel.app",
     siteName: "Privit",

@@ -18,7 +18,7 @@ export default function Navbar() {
   return (
     <header className="flex items-center justify-between px-6 md:px-12 py-6 max-w-7xl mx-auto relative z-20">
       {/* Logo */}
-      <div className="text-2xl font-bold tracking-tight">YourLogo</div>
+      <div className="text-2xl font-bold tracking-tight">Privito</div>
 
       {/* Auth Buttons */}
       <div className="hidden md:flex items-center gap-4">
