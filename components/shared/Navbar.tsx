@@ -3,6 +3,7 @@
 import { useEffect, useState } from "react";
 import { getSession } from "@/libs/sessions"; // adjust path to your session file
 import Link from "next/link";
+import Image from "next/image";
 
 export default function Navbar() {
   const [isLoggedIn, setIsLoggedIn] = useState(false);
@@ -18,7 +19,7 @@ export default function Navbar() {
   return (
     <header className="flex items-center justify-between px-6 md:px-12 py-6 max-w-7xl mx-auto relative z-20">
       {/* Logo */}
-      <div className="text-2xl font-bold tracking-tight">Privito</div>
+      <Image src="/logo.png" alt="Logo" height={150} width={150} />
 
       {/* Auth Buttons */}
       <div className="hidden md:flex items-center gap-4">

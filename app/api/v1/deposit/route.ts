@@ -9,7 +9,6 @@ export async function POST(req: Request) {
     if (!email || !amount || !transactionId || !receiptUrl) {
       return NextResponse.json({ error: "Invalid input" }, { status: 400 });
     }
-    console.log(email, amount, transactionId, receiptUrl);
     await connectToDB();
 
     const user = await User.findOne({ email });

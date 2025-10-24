@@ -16,7 +16,7 @@ function seededRandom(seed: number) {
 }
 
 // ✅ Generate mock transactions deterministically
-export const mockTransactions: Transaction[] = Array.from({ length: 300 }).map(
+export const mockTransactions: Transaction[] = Array.from({ length: 50 }).map(
   (_, i) => {
     const type = i % 2 === 0 ? "Deposit" : "Withdrawal"; // predictable
     const baseAmount = Math.floor(seededRandom(i + 1) * 5000);

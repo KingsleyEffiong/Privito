@@ -16,7 +16,7 @@ const geistMono = Geist_Mono({
 });
 
 export const metadata: Metadata = {
-  title: "Privit",
+  title: "Privito",
   description: "All in one investment platform for crypto, stocks, and more",
   keywords: ["Privito", "Investment", "Crypto", "Stocks"],
   metadataBase: new URL("https://privito.vercel.app"),
@@ -27,6 +27,9 @@ export const metadata: Metadata = {
     siteName: "Privit",
     locale: "en_US",
     type: "website",
+  },
+  icons: {
+    icon: "/logo.png",
   },
 };
 

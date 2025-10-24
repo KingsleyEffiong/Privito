@@ -47,7 +47,7 @@ export default function Home() {
       <InvestmentPlans />
       <CryptoChartPage />
       <Transactions />
-      <CryptoNews />
+      {/* <CryptoNews /> */}
       <Faq />
       <Sponsorship />
       <InvestorTestimonials />
