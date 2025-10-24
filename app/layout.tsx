@@ -24,7 +24,7 @@ export const metadata: Metadata = {
     title: "Privito",
     description: "All in one investment platform for crypto, stocks, and more",
     url: "https://privito.vercel.app",
-    siteName: "Privit",
+    siteName: "Privito",
     locale: "en_US",
     type: "website",
   },
