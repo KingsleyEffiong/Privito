@@ -128,10 +128,19 @@ export default function DepositPreviewPage() {
       setSubmitting(false);
       return;
     }
-
+    const formData = new FormData();
+    formData.append("file", receiptFile);
     try {
+      const res = await fetch("/api/upload-file", {
+        method: "POST",
+        body: formData,
+      });
+      const result = await res.json();
       const imageUrl = await uploadToCloudinary(receiptFile);
 
+      if (!result.success) {
+        throw new Error("Image upload failed");
+      }
       deposit(
         {
           email,

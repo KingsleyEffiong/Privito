@@ -29,6 +29,7 @@
     "react-countup": "^6.5.3",
     "react-dom": "19.1.0",
     "recharts": "^3.1.2",
+    "resend": "^6.5.2",
     "swiper": "^11.2.10",
     "three": "^0.179.1",
     "uuid": "^11.1.0",

@@ -16,20 +16,20 @@ const geistMono = Geist_Mono({
 });
 
 export const metadata: Metadata = {
-  title: "Privito",
+  title: "Apex Capital",
   description: "All in one investment platform for crypto, stocks, and more",
-  keywords: ["Privito", "Investment", "Crypto", "Stocks"],
+  keywords: ["Apex Capital", "Investment", "Crypto", "Stocks"],
   metadataBase: new URL("https://privito.vercel.app"),
   openGraph: {
-    title: "Privito",
+    title: "Apex Capital",
     description: "All in one investment platform for crypto, stocks, and more",
     url: "https://privito.vercel.app",
-    siteName: "Privito",
+    siteName: "Apex Capital",
     locale: "en_US",
     type: "website",
   },
   icons: {
-    icon: "/logo.png",
+    icon: "/Apex Logo.png",
   },
 };
 

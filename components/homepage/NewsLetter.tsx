@@ -11,7 +11,8 @@ function NewsLetter() {
       {/* Content container */}
       <div className="relative z-10 max-w-4xl mx-auto bg-white/5 border border-white/10 rounded-2xl backdrop-blur-md p-8 sm:p-12 shadow-2xl">
         <h2 className="text-3xl sm:text-4xl font-bold mb-4 text-center">
-          📩 Stay Updated with <span className="text-blue-500">Privito</span>
+          📩 Stay Updated with{" "}
+          <span className="text-blue-500">Apex Capital</span>
         </h2>
         <p className="text-gray-300 text-center max-w-lg mx-auto mb-8">
           Subscribe to our newsletter and get the latest updates on crypto,
