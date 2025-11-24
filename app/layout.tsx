@@ -16,14 +16,14 @@ const geistMono = Geist_Mono({
 });
 
 export const metadata: Metadata = {
-  title: "Apex Capital",
+  title: "Apex Capital Investment",
   description: "All in one investment platform for crypto, stocks, and more",
   keywords: ["Apex Capital", "Investment", "Crypto", "Stocks"],
-  metadataBase: new URL("https://privito.vercel.app"),
+  metadataBase: new URL("https://apexcapitalinvestment.vercel.app"),
   openGraph: {
     title: "Apex Capital",
     description: "All in one investment platform for crypto, stocks, and more",
-    url: "https://privito.vercel.app",
+    url: "https://apexcapitalinvestment.vercel.app",
     siteName: "Apex Capital",
     locale: "en_US",
     type: "website",
